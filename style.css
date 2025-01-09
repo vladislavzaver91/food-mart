@@ -694,76 +694,85 @@ h6 {
 }
 
 /* product-item */
-.product-details {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	max-width: 800px;
-	margin: 20px auto;
+.product-page-container {
+	max-width: 900px;
+	margin: 40px auto;
 	padding: 20px;
-	border: 1px solid #ddd;
-	border-radius: 8px;
+	background: #fff;
+	border-radius: 10px;
 	box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-	background-color: #fff;
 }
 
-/* Стили для изображения */
-#product-image {
-	max-width: 100%;
-	height: auto;
-	border-radius: 8px;
-	margin-bottom: 20px;
-	object-fit: contain;
+.product-page-grid {
+	display: grid;
+	grid-template-columns: 1fr 1.5fr;
+	gap: 30px;
+	position: relative;
 }
 
-/* Стили для информации о продукте */
-.product-info {
+.product-page-card {
+	position: relative;
 	text-align: center;
-	padding: 0 20px;
 }
 
-/* Стили для названия продукта */
-#product-name {
-	font-size: 2rem;
-	font-weight: bold;
-	color: #333;
-	margin-bottom: 10px;
+.product-page-img {
+	width: 100%;
+	max-width: 400px;
+	border-radius: 10px;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Стили для цены */
-.price {
-	font-size: 1.5rem;
-	font-weight: bold;
-	color: #e60000;
-	margin: 10px 0;
+.product-page-badge {
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
-/* Описание продукта */
-.description {
-	font-size: 1rem;
-	color: #555;
-	margin-bottom: 10px;
+/* Значок скидки */
+.product-page-badge .badge {
+	font-size: 14px;
+	padding: 6px 10px;
+	border-radius: 20px;
 }
 
-/* Дополнительные стили для рейтинга и единицы */
-.product-info p {
-	color: #777;
-	font-size: 1rem;
-	margin-bottom: 5px;
-}
-
-/* Стили для ссылки на страницу продуктов */
-.product-link {
-	color: #007bff;
+.btn-wishlist {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	background: rgba(255, 255, 255, 0.8);
+	border-radius: 50%;
 	text-decoration: none;
-	margin-top: 20px;
-	font-size: 1rem;
-	text-align: center;
-	display: inline-block;
+	box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+	transition: background 0.3s ease;
 }
 
-a:hover {
-	text-decoration: underline;
+.btn-wishlist:hover {
+	background: rgb(240, 56, 56);
+	color: #fff;
+}
+
+.product-page-link {
+	display: block;
+	text-align: center;
+	margin-top: 20px;
+	text-decoration: none;
+	font-size: 16px;
+}
+
+.product-page-link:hover {
+	text-decoration: none;
+}
+
+@media (max-width: 768px) {
+	.product-page-grid {
+		grid-template-columns: 1fr;
+		text-align: center;
+	}
 }
 
 /* floating image */
