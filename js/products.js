@@ -16,38 +16,38 @@ const bestSellProducts = document.getElementById('bestSellProducts')
 const mostPopularProducts = document.getElementById('mostPopularProducts')
 const justArrivedProducts = document.getElementById('justArrivedProducts')
 
-// attach quantity handlers
-function attachQuantityHandlers() {
-	document.querySelectorAll('.product-item').forEach(product => {
-		const quantityInput = product.querySelector('.input-number')
-		const minusButton = product.querySelector('.quantity-left-minus')
-		const plusButton = product.querySelector('.quantity-right-plus')
-
-		plusButton.addEventListener('click', () => {
-			let quantity = parseInt(quantityInput.value, 10)
-			quantityInput.value = quantity + 1
-		})
-
-		minusButton.addEventListener('click', () => {
-			let quantity = parseInt(quantityInput.value, 10)
-			if (quantity > 1) {
-				quantityInput.value = quantity - 1
-			}
-		})
-	})
-}
-
 // render all products
 function renderAllProducts() {
+	// attach quantity handlers
+	function attachQuantityHandlers() {
+		document.querySelectorAll('.all-products').forEach(product => {
+			const quantityInput = product.querySelector('.input-number')
+			const minusButton = product.querySelector('.quantity-left-minus')
+			const plusButton = product.querySelector('.quantity-right-plus')
+
+			plusButton.addEventListener('click', () => {
+				let quantity = parseInt(quantityInput.value, 10) || 0
+				quantityInput.value = quantity + 1
+			})
+
+			minusButton.addEventListener('click', () => {
+				let quantity = parseInt(quantityInput.value, 10) || 1
+				if (quantity > 1) {
+					quantityInput.value = quantity - 1
+				}
+			})
+		})
+	}
+
 	productGrid.innerHTML = ''
 
-	ALL_PRODUCTS.forEach(product => {
+	ALL_PRODUCTS.forEach((product, index) => {
 		const productElement = document.createElement('div')
 		productElement.classList.add('col')
 
 		productElement.innerHTML = `
             <div class="col">
-                      <div class="product-item">
+                      <div class="product-item all-products" data-product-index="${index}">
                         <span class="badge bg-success position-absolute m-3">${product.discount}</span>
                         <a class="add-to-favorites btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
                         <figure>
@@ -65,7 +65,7 @@ function renderAllProducts() {
                                     <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
                                   </button>
                               </span>
-                              <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
+                              <input type="text" name="quantity" class="form-control input-number" value="1" data-product-index="${index}">
                               <span class="input-group-btn">
                                   <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
                                       <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
@@ -81,23 +81,23 @@ function renderAllProducts() {
 		productGrid.appendChild(productElement)
 	})
 
+	attachQuantityHandlers()
 	productGrid.addEventListener('click', function (event) {
 		const target = event.target.closest('.add-to-cart, .add-to-favorites')
 		if (!target) return
 
 		const productItem = event.target.closest('.product-item')
-
-		const productIndex = Array.from(
-			productGrid.querySelectorAll('.product-item')
-		).indexOf(productItem)
-
+		const productIndex = productItem.dataset.productIndex
 		const product = ALL_PRODUCTS[productIndex]
 
+		const quantityInput = productItem.querySelector('.input-number')
+		const quantity = parseInt(quantityInput.value, 10) || 1
+
 		if (target.classList.contains('add-to-cart')) {
-			addToCart(product)
+			addToCart({ ...product, quantity })
 			alert('Product added to cart!')
 		} else if (target.classList.contains('add-to-favorites')) {
-			addToFavorites(product)
+			addToFavorites({ ...product, quantity })
 			alert('Product added to favorites!')
 		}
 	})
@@ -109,65 +109,86 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // render fruits & veges
 function renderFruitsAndVeges() {
+	// attach quantity handlers
+	function attachQuantityHandlers() {
+		document.querySelectorAll('.fruits-veges').forEach(product => {
+			const quantityInput = product.querySelector('.input-number')
+			const minusButton = product.querySelector('.quantity-left-minus')
+			const plusButton = product.querySelector('.quantity-right-plus')
+
+			plusButton.addEventListener('click', () => {
+				let quantity = parseInt(quantityInput.value, 10) || 0
+				quantityInput.value = quantity + 1
+			})
+
+			minusButton.addEventListener('click', () => {
+				let quantity = parseInt(quantityInput.value, 10) || 1
+				if (quantity > 1) {
+					quantityInput.value = quantity - 1
+				}
+			})
+		})
+	}
+
 	fruitsAndVegesGrid.innerHTML = ''
 
-	FRUITS_AND_VEGES.forEach(product => {
+	FRUITS_AND_VEGES.forEach((product, index) => {
 		const productElement = document.createElement('div')
 		productElement.classList.add('col')
 
 		productElement.innerHTML = `
-            <div class="col">
-                      <div class="product-item">
-                        <span class="badge bg-success position-absolute m-3">${product.discount}</span>
-                        <a class="add-to-favorites btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-                        <figure>
-                          <a href="product.html?id=${product.id}" title="${product.name}">
-                            <img src="${product.image}"  class="tab-image">
-                          </a>
-                        </figure>
-                        <h3>${product.name}</h3>
-                        <span class="qty">${product.unit}</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> ${product.rating}</span>
-                        <span class="price">${product.price}</span>
-                        <div class="d-flex align-items-center justify-content-between">
-                          <div class="input-group product-qty">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                                    <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                                  </button>
-                              </span>
-                              <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                                  </button>
-                              </span>
-                          </div>
-                          <a class="add-to-cart nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></a>
-                        </div>
-                      </div>
-                    </div>
-        `
+		<div class="col">
+							<div class="product-item fruits-veges" data-product-index="${index}">
+								<span class="badge bg-success position-absolute m-3">${product.discount}</span>
+								<a class="add-to-favorites btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
+								<figure>
+									<a href="product.html?id=${product.id}" title="${product.name}">
+										<img src="${product.image}"  class="tab-image">
+									</a>
+								</figure>
+								<h3>${product.name}</h3>
+								<span class="qty">${product.unit}</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> ${product.rating}</span>
+								<span class="price">${product.price}</span>
+								<div class="d-flex align-items-center justify-content-between">
+									<div class="input-group product-qty">
+											<span class="input-group-btn">
+													<button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
+														<svg width="16" height="16"><use xlink:href="#minus"></use></svg>
+													</button>
+											</span>
+											<input type="text" name="quantity" class="form-control input-number" value="1" data-product-index="${index}">
+											<span class="input-group-btn">
+													<button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
+															<svg width="16" height="16"><use xlink:href="#plus"></use></svg>
+													</button>
+											</span>
+									</div>
+									<a class="add-to-cart nav-link" >Add to Cart <iconify-icon icon="uil:shopping-cart"></a>
+								</div>
+							</div>
+						</div>
+`
 
 		fruitsAndVegesGrid.appendChild(productElement)
 	})
 
+	attachQuantityHandlers()
 	fruitsAndVegesGrid.addEventListener('click', function (event) {
 		const target = event.target.closest('.add-to-cart, .add-to-favorites')
 		if (!target) return
 
 		const productItem = event.target.closest('.product-item')
-
-		const productIndex = Array.from(
-			fruitsAndVegesGrid.querySelectorAll('.product-item')
-		).indexOf(productItem)
-
+		const productIndex = productItem.dataset.productIndex
 		const product = FRUITS_AND_VEGES[productIndex]
 
+		const quantityInput = productItem.querySelector('.input-number')
+		const quantity = parseInt(quantityInput.value, 10) || 1
+
 		if (target.classList.contains('add-to-cart')) {
-			addToCart(product)
+			addToCart({ ...product, quantity })
 			alert('Product added to cart!')
 		} else if (target.classList.contains('add-to-favorites')) {
-			addToFavorites(product)
+			addToFavorites({ ...product, quantity })
 			alert('Product added to favorites!')
 		}
 	})
@@ -179,65 +200,86 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // render juices
 function renderJuices() {
+	// attach quantity handlers
+	function attachQuantityHandlers() {
+		document.querySelectorAll('.juices').forEach(product => {
+			const quantityInput = product.querySelector('.input-number')
+			const minusButton = product.querySelector('.quantity-left-minus')
+			const plusButton = product.querySelector('.quantity-right-plus')
+
+			plusButton.addEventListener('click', () => {
+				let quantity = parseInt(quantityInput.value, 10) || 0
+				quantityInput.value = quantity + 1
+			})
+
+			minusButton.addEventListener('click', () => {
+				let quantity = parseInt(quantityInput.value, 10) || 1
+				if (quantity > 1) {
+					quantityInput.value = quantity - 1
+				}
+			})
+		})
+	}
+
 	juicesGrid.innerHTML = ''
 
-	JUICES.forEach(product => {
+	JUICES.forEach((product, index) => {
 		const productElement = document.createElement('div')
 		productElement.classList.add('col')
 
 		productElement.innerHTML = `
-            <div class="col">
-                      <div class="product-item">
-                        <span class="badge bg-success position-absolute m-3">${product.discount}</span>
-                        <a class="add-to-favorites btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
-                        <figure>
-                          <a href="product.html?id=${product.id}" title="${product.name}">
-                            <img src="${product.image}"  class="tab-image">
-                          </a>
-                        </figure>
-                        <h3>${product.name}</h3>
-                        <span class="qty">${product.unit}</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> ${product.rating}</span>
-                        <span class="price">${product.price}</span>
-                        <div class="d-flex align-items-center justify-content-between">
-                          <div class="input-group product-qty">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
-                                    <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
-                                  </button>
-                              </span>
-                              <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
-                              <span class="input-group-btn">
-                                  <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
-                                      <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
-                                  </button>
-                              </span>
-                          </div>
-                          <a class="add-to-cart nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></a>
-                        </div>
-                      </div>
-                    </div>
-        `
+		<div class="col">
+							<div class="product-item juices" data-product-index="${index}">
+								<span class="badge bg-success position-absolute m-3">${product.discount}</span>
+								<a class="add-to-favorites btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
+								<figure>
+									<a href="product.html?id=${product.id}" title="${product.name}">
+										<img src="${product.image}"  class="tab-image">
+									</a>
+								</figure>
+								<h3>${product.name}</h3>
+								<span class="qty">${product.unit}</span><span class="rating"><svg width="24" height="24" class="text-primary"><use xlink:href="#star-solid"></use></svg> ${product.rating}</span>
+								<span class="price">${product.price}</span>
+								<div class="d-flex align-items-center justify-content-between">
+									<div class="input-group product-qty">
+											<span class="input-group-btn">
+													<button type="button" class="quantity-left-minus btn btn-danger btn-number" data-type="minus">
+														<svg width="16" height="16"><use xlink:href="#minus"></use></svg>
+													</button>
+											</span>
+											<input type="text" name="quantity" class="form-control input-number" value="1" data-product-index="${index}">
+											<span class="input-group-btn">
+													<button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
+															<svg width="16" height="16"><use xlink:href="#plus"></use></svg>
+													</button>
+											</span>
+									</div>
+									<a class="add-to-cart nav-link" >Add to Cart <iconify-icon icon="uil:shopping-cart"></a>
+								</div>
+							</div>
+						</div>
+`
 
 		juicesGrid.appendChild(productElement)
 	})
 
+	attachQuantityHandlers()
 	juicesGrid.addEventListener('click', function (event) {
 		const target = event.target.closest('.add-to-cart, .add-to-favorites')
 		if (!target) return
 
 		const productItem = event.target.closest('.product-item')
-
-		const productIndex = Array.from(
-			juicesGrid.querySelectorAll('.product-item')
-		).indexOf(productItem)
-
+		const productIndex = productItem.dataset.productIndex
 		const product = JUICES[productIndex]
 
+		const quantityInput = productItem.querySelector('.input-number')
+		const quantity = parseInt(quantityInput.value, 10) || 1
+
 		if (target.classList.contains('add-to-cart')) {
-			addToCart(product)
+			addToCart({ ...product, quantity })
 			alert('Product added to cart!')
 		} else if (target.classList.contains('add-to-favorites')) {
-			addToFavorites(product)
+			addToFavorites({ ...product, quantity })
 			alert('Product added to favorites!')
 		}
 	})
@@ -250,6 +292,27 @@ document.addEventListener('DOMContentLoaded', () => {
 // render best selling products
 function renderBestSellProducts() {
 	bestSellProducts.innerHTML = ''
+	// attach quantity handlers
+	function attachQuantityHandlers() {
+		document.querySelectorAll('.best-selling').forEach(product => {
+			const quantityInput = product.querySelector('.input-number')
+			const minusButton = product.querySelector('.quantity-left-minus')
+			const plusButton = product.querySelector('.quantity-right-plus')
+
+			plusButton.addEventListener('click', () => {
+				let quantity = parseInt(quantityInput.value, 10) || 0
+				quantityInput.value = quantity + 1
+			})
+
+			minusButton.addEventListener('click', () => {
+				let quantity = parseInt(quantityInput.value, 10) || 1
+				if (quantity > 1) {
+					quantityInput.value = quantity - 1
+				}
+			})
+		})
+	}
+
 	// swiper slide
 	const bestSellingSwiper = new Swiper('.best-selling-carousel', {
 		slidesPerView: 4,
@@ -264,12 +327,12 @@ function renderBestSellProducts() {
 		},
 	})
 
-	BEST_SELL_PRODUCTS.forEach(product => {
+	BEST_SELL_PRODUCTS.forEach((product, index) => {
 		const productElement = document.createElement('div')
-		productElement.classList.add('product-item', 'swiper-slide')
+		productElement.classList.add('product-item', 'best-selling', 'swiper-slide')
 
 		productElement.innerHTML = `
-            <div>
+            <div data-product-index="${index}">
                   <span class="badge bg-success position-absolute m-3">${product.discount}</span>
                   <a class="add-to-favorites btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
                   <figure>
@@ -287,7 +350,7 @@ function renderBestSellProducts() {
                               <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
                             </button>
                         </span>
-                        <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
+                        <input type="text" name="quantity" class="form-control input-number" value="1" data-product-index="${index}">
                         <span class="input-group-btn">
                             <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
                                 <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
@@ -302,6 +365,7 @@ function renderBestSellProducts() {
 		bestSellProducts.appendChild(productElement)
 	})
 
+	attachQuantityHandlers()
 	bestSellProducts.addEventListener('click', function (event) {
 		const target = event.target.closest('.add-to-cart, .add-to-favorites')
 		if (!target) return
@@ -310,11 +374,14 @@ function renderBestSellProducts() {
 		const productIndex = [...bestSellProducts.children].indexOf(productItem)
 		const product = BEST_SELL_PRODUCTS[productIndex]
 
+		const quantityInput = productItem.querySelector('.input-number')
+		const quantity = parseInt(quantityInput.value, 10) || 1
+
 		if (target.classList.contains('add-to-cart')) {
-			addToCart(product)
+			addToCart({ ...product, quantity })
 			alert('Product added to cart!')
 		} else if (target.classList.contains('add-to-favorites')) {
-			addToFavorites(product)
+			addToFavorites({ ...product, quantity })
 			alert('Product added to favorites!')
 		}
 	})
@@ -329,7 +396,26 @@ document.addEventListener('DOMContentLoaded', () => {
 // render most popular
 function renderMostPopularProducts() {
 	mostPopularProducts.innerHTML = ''
+	// attach quantity handlers
+	function attachQuantityHandlers() {
+		document.querySelectorAll('.most-popular').forEach(product => {
+			const quantityInput = product.querySelector('.input-number')
+			const minusButton = product.querySelector('.quantity-left-minus')
+			const plusButton = product.querySelector('.quantity-right-plus')
 
+			plusButton.addEventListener('click', () => {
+				let quantity = parseInt(quantityInput.value, 10) || 0
+				quantityInput.value = quantity + 1
+			})
+
+			minusButton.addEventListener('click', () => {
+				let quantity = parseInt(quantityInput.value, 10) || 1
+				if (quantity > 1) {
+					quantityInput.value = quantity - 1
+				}
+			})
+		})
+	}
 	// swiper slide
 	const mostPopularSwiper = new Swiper('.most-popular-carousel', {
 		slidesPerView: 4,
@@ -344,12 +430,12 @@ function renderMostPopularProducts() {
 		},
 	})
 
-	MOST_POPULAR_PRODUCTS.forEach(product => {
+	MOST_POPULAR_PRODUCTS.forEach((product, index) => {
 		const productElement = document.createElement('div')
-		productElement.classList.add('product-item', 'swiper-slide')
+		productElement.classList.add('product-item', 'most-popular', 'swiper-slide')
 
 		productElement.innerHTML = `
-            <div>
+            <div data-product-index="${index}">
                   <span class="badge bg-success position-absolute m-3">${product.discount}</span>
                   <a class="add-to-favorites btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
                   <figure>
@@ -367,7 +453,7 @@ function renderMostPopularProducts() {
                               <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
                             </button>
                         </span>
-                        <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
+                        <input type="text" name="quantity" class="form-control input-number" value="1" data-product-index="${index}">
                         <span class="input-group-btn">
                             <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
                                 <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
@@ -382,6 +468,7 @@ function renderMostPopularProducts() {
 		mostPopularProducts.appendChild(productElement)
 	})
 
+	attachQuantityHandlers()
 	mostPopularProducts.addEventListener('click', function (event) {
 		const target = event.target.closest('.add-to-cart, .add-to-favorites')
 		if (!target) return
@@ -390,11 +477,14 @@ function renderMostPopularProducts() {
 		const productIndex = [...mostPopularProducts.children].indexOf(productItem)
 		const product = MOST_POPULAR_PRODUCTS[productIndex]
 
+		const quantityInput = productItem.querySelector('.input-number')
+		const quantity = parseInt(quantityInput.value, 10) || 1
+
 		if (target.classList.contains('add-to-cart')) {
-			addToCart(product)
+			addToCart({ ...product, quantity })
 			alert('Product added to cart!')
 		} else if (target.classList.contains('add-to-favorites')) {
-			addToFavorites(product)
+			addToFavorites({ ...product, quantity })
 			alert('Product added to favorites!')
 		}
 	})
@@ -409,7 +499,26 @@ document.addEventListener('DOMContentLoaded', () => {
 // render just arrived
 function renderJustArrivedProducts() {
 	justArrivedProducts.innerHTML = ''
+	// attach quantity handlers
+	function attachQuantityHandlers() {
+		document.querySelectorAll('.just-arrived').forEach(product => {
+			const quantityInput = product.querySelector('.input-number')
+			const minusButton = product.querySelector('.quantity-left-minus')
+			const plusButton = product.querySelector('.quantity-right-plus')
 
+			plusButton.addEventListener('click', () => {
+				let quantity = parseInt(quantityInput.value, 10) || 0
+				quantityInput.value = quantity + 1
+			})
+
+			minusButton.addEventListener('click', () => {
+				let quantity = parseInt(quantityInput.value, 10) || 1
+				if (quantity > 1) {
+					quantityInput.value = quantity - 1
+				}
+			})
+		})
+	}
 	// swiper slide
 	const justArrivedSwiper = new Swiper('.just-arrived-carousel', {
 		slidesPerView: 4,
@@ -424,12 +533,12 @@ function renderJustArrivedProducts() {
 		},
 	})
 
-	JUST_ARRIVED_PRODUCTS.forEach(product => {
+	JUST_ARRIVED_PRODUCTS.forEach((product, index) => {
 		const productElement = document.createElement('div')
-		productElement.classList.add('product-item', 'swiper-slide')
+		productElement.classList.add('product-item', 'just-arrived', 'swiper-slide')
 
 		productElement.innerHTML = `
-            <div>
+            <div data-product-index="${index}">
                   <span class="badge bg-success position-absolute m-3">${product.discount}</span>
                   <a class="add-to-favorites btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
                   <figure>
@@ -447,7 +556,7 @@ function renderJustArrivedProducts() {
                               <svg width="16" height="16"><use xlink:href="#minus"></use></svg>
                             </button>
                         </span>
-                        <input type="text" id="quantity" name="quantity" class="form-control input-number" value="1">
+                        <input type="text" name="quantity" class="form-control input-number" value="1" data-product-index="${index}">
                         <span class="input-group-btn">
                             <button type="button" class="quantity-right-plus btn btn-success btn-number" data-type="plus">
                                 <svg width="16" height="16"><use xlink:href="#plus"></use></svg>
@@ -461,6 +570,7 @@ function renderJustArrivedProducts() {
 		justArrivedProducts.appendChild(productElement)
 	})
 
+	attachQuantityHandlers()
 	justArrivedProducts.addEventListener('click', function (event) {
 		const target = event.target.closest('.add-to-cart, .add-to-favorites')
 		if (!target) return
@@ -469,16 +579,18 @@ function renderJustArrivedProducts() {
 		const productIndex = [...justArrivedProducts.children].indexOf(productItem)
 		const product = JUST_ARRIVED_PRODUCTS[productIndex]
 
+		const quantityInput = productItem.querySelector('.input-number')
+		const quantity = parseInt(quantityInput.value, 10) || 1
+
 		if (target.classList.contains('add-to-cart')) {
-			addToCart(product)
+			addToCart({ ...product, quantity })
 			alert('Product added to cart!')
 		} else if (target.classList.contains('add-to-favorites')) {
-			addToFavorites(product)
+			addToFavorites({ ...product, quantity })
 			alert('Product added to favorites!')
 		}
 	})
 
-	attachQuantityHandlers()
 	justArrivedSwiper.update()
 }
 
@@ -567,9 +679,9 @@ function addToCart(product) {
 	const existingProduct = cart.find(p => p.id === product.id)
 
 	if (existingProduct) {
-		existingProduct.quantity += 1
+		existingProduct.quantity += product.quantity
 	} else {
-		cart.push({ ...product, quantity: 1 })
+		cart.push(product)
 	}
 	localStorage.setItem('cart', JSON.stringify(cart))
 
@@ -583,9 +695,9 @@ function addToFavorites(product) {
 	const existingProduct = favorites.find(p => p.id === product.id)
 
 	if (existingProduct) {
-		existingProduct.quantity += 1
+		existingProduct.quantity += product.quantity
 	} else {
-		favorites.push({ ...product, quantity: 1 })
+		favorites.push(product)
 	}
 	localStorage.setItem('favorites', JSON.stringify(favorites))
 }
