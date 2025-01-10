@@ -16,20 +16,6 @@ const bestSellProducts = document.getElementById('bestSellProducts')
 const mostPopularProducts = document.getElementById('mostPopularProducts')
 const justArrivedProducts = document.getElementById('justArrivedProducts')
 
-// swiper slide
-const swiper = new Swiper('.products-carousel', {
-	slidesPerView: 4,
-	spaceBetween: 20,
-	navigation: {
-		nextEl: '.swiper-button-next',
-		prevEl: '.swiper-button-prev',
-	},
-	pagination: {
-		el: '.swiper-pagination',
-		clickable: true,
-	},
-})
-
 // attach quantity handlers
 function attachQuantityHandlers() {
 	document.querySelectorAll('.product-item').forEach(product => {
@@ -63,7 +49,7 @@ function renderAllProducts() {
             <div class="col">
                       <div class="product-item">
                         <span class="badge bg-success position-absolute m-3">${product.discount}</span>
-                        <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
+                        <a class="add-to-favorites btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
                         <figure>
                           <a href="product.html?id=${product.id}" title="${product.name}">
                             <img src="${product.image}"  class="tab-image">
@@ -86,13 +72,34 @@ function renderAllProducts() {
                                   </button>
                               </span>
                           </div>
-                          <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></a>
+                          <a class="add-to-cart nav-link" >Add to Cart <iconify-icon icon="uil:shopping-cart"></a>
                         </div>
                       </div>
                     </div>
         `
 
 		productGrid.appendChild(productElement)
+	})
+
+	productGrid.addEventListener('click', function (event) {
+		const target = event.target.closest('.add-to-cart, .add-to-favorites')
+		if (!target) return
+
+		const productItem = event.target.closest('.product-item')
+
+		const productIndex = Array.from(
+			productGrid.querySelectorAll('.product-item')
+		).indexOf(productItem)
+
+		const product = ALL_PRODUCTS[productIndex]
+
+		if (target.classList.contains('add-to-cart')) {
+			addToCart(product)
+			alert('Product added to cart!')
+		} else if (target.classList.contains('add-to-favorites')) {
+			addToFavorites(product)
+			alert('Product added to favorites!')
+		}
 	})
 }
 
@@ -112,7 +119,7 @@ function renderFruitsAndVeges() {
             <div class="col">
                       <div class="product-item">
                         <span class="badge bg-success position-absolute m-3">${product.discount}</span>
-                        <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
+                        <a class="add-to-favorites btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
                         <figure>
                           <a href="product.html?id=${product.id}" title="${product.name}">
                             <img src="${product.image}"  class="tab-image">
@@ -135,13 +142,34 @@ function renderFruitsAndVeges() {
                                   </button>
                               </span>
                           </div>
-                          <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></a>
+                          <a class="add-to-cart nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></a>
                         </div>
                       </div>
                     </div>
         `
 
 		fruitsAndVegesGrid.appendChild(productElement)
+	})
+
+	fruitsAndVegesGrid.addEventListener('click', function (event) {
+		const target = event.target.closest('.add-to-cart, .add-to-favorites')
+		if (!target) return
+
+		const productItem = event.target.closest('.product-item')
+
+		const productIndex = Array.from(
+			fruitsAndVegesGrid.querySelectorAll('.product-item')
+		).indexOf(productItem)
+
+		const product = FRUITS_AND_VEGES[productIndex]
+
+		if (target.classList.contains('add-to-cart')) {
+			addToCart(product)
+			alert('Product added to cart!')
+		} else if (target.classList.contains('add-to-favorites')) {
+			addToFavorites(product)
+			alert('Product added to favorites!')
+		}
 	})
 }
 
@@ -161,7 +189,7 @@ function renderJuices() {
             <div class="col">
                       <div class="product-item">
                         <span class="badge bg-success position-absolute m-3">${product.discount}</span>
-                        <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
+                        <a class="add-to-favorites btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
                         <figure>
                           <a href="product.html?id=${product.id}" title="${product.name}">
                             <img src="${product.image}"  class="tab-image">
@@ -184,13 +212,34 @@ function renderJuices() {
                                   </button>
                               </span>
                           </div>
-                          <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></a>
+                          <a class="add-to-cart nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></a>
                         </div>
                       </div>
                     </div>
         `
 
 		juicesGrid.appendChild(productElement)
+	})
+
+	juicesGrid.addEventListener('click', function (event) {
+		const target = event.target.closest('.add-to-cart, .add-to-favorites')
+		if (!target) return
+
+		const productItem = event.target.closest('.product-item')
+
+		const productIndex = Array.from(
+			juicesGrid.querySelectorAll('.product-item')
+		).indexOf(productItem)
+
+		const product = JUICES[productIndex]
+
+		if (target.classList.contains('add-to-cart')) {
+			addToCart(product)
+			alert('Product added to cart!')
+		} else if (target.classList.contains('add-to-favorites')) {
+			addToFavorites(product)
+			alert('Product added to favorites!')
+		}
 	})
 }
 
@@ -201,6 +250,19 @@ document.addEventListener('DOMContentLoaded', () => {
 // render best selling products
 function renderBestSellProducts() {
 	bestSellProducts.innerHTML = ''
+	// swiper slide
+	const bestSellingSwiper = new Swiper('.best-selling-carousel', {
+		slidesPerView: 4,
+		spaceBetween: 20,
+		navigation: {
+			nextEl: '.best-selling-next',
+			prevEl: '.best-selling-prev',
+		},
+		pagination: {
+			el: '.swiper-pagination',
+			clickable: true,
+		},
+	})
 
 	BEST_SELL_PRODUCTS.forEach(product => {
 		const productElement = document.createElement('div')
@@ -209,7 +271,7 @@ function renderBestSellProducts() {
 		productElement.innerHTML = `
             <div>
                   <span class="badge bg-success position-absolute m-3">${product.discount}</span>
-                  <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
+                  <a class="add-to-favorites btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
                   <figure>
                     <a href="product.html?id=${product.id}" title="${product.name}">
                       <img src="${product.image}" alt="${product.name}"  class="tab-image">
@@ -232,14 +294,32 @@ function renderBestSellProducts() {
                             </button>
                         </span>
                     </div>
-                    <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></a>
+                    <a class="add-to-cart nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></a>
                   </div>
                 </div>
         `
 
 		bestSellProducts.appendChild(productElement)
 	})
-	swiper.update()
+
+	bestSellProducts.addEventListener('click', function (event) {
+		const target = event.target.closest('.add-to-cart, .add-to-favorites')
+		if (!target) return
+
+		const productItem = event.target.closest('.product-item')
+		const productIndex = [...bestSellProducts.children].indexOf(productItem)
+		const product = BEST_SELL_PRODUCTS[productIndex]
+
+		if (target.classList.contains('add-to-cart')) {
+			addToCart(product)
+			alert('Product added to cart!')
+		} else if (target.classList.contains('add-to-favorites')) {
+			addToFavorites(product)
+			alert('Product added to favorites!')
+		}
+	})
+
+	bestSellingSwiper.update()
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -250,6 +330,20 @@ document.addEventListener('DOMContentLoaded', () => {
 function renderMostPopularProducts() {
 	mostPopularProducts.innerHTML = ''
 
+	// swiper slide
+	const mostPopularSwiper = new Swiper('.most-popular-carousel', {
+		slidesPerView: 4,
+		spaceBetween: 20,
+		navigation: {
+			nextEl: '.most-popular-next',
+			prevEl: '.most-popular-prev',
+		},
+		pagination: {
+			el: '.swiper-pagination',
+			clickable: true,
+		},
+	})
+
 	MOST_POPULAR_PRODUCTS.forEach(product => {
 		const productElement = document.createElement('div')
 		productElement.classList.add('product-item', 'swiper-slide')
@@ -257,7 +351,7 @@ function renderMostPopularProducts() {
 		productElement.innerHTML = `
             <div>
                   <span class="badge bg-success position-absolute m-3">${product.discount}</span>
-                  <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
+                  <a class="add-to-favorites btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
                   <figure>
                     <a href="product.html?id=${product.id}" title="${product.name}">
                       <img src="${product.image}" alt="${product.name}"  class="tab-image">
@@ -280,14 +374,32 @@ function renderMostPopularProducts() {
                             </button>
                         </span>
                     </div>
-                    <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></a>
+                    <a class="add-to-cart nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></a>
                   </div>
                 </div>
         `
 
 		mostPopularProducts.appendChild(productElement)
 	})
-	swiper.update()
+
+	mostPopularProducts.addEventListener('click', function (event) {
+		const target = event.target.closest('.add-to-cart, .add-to-favorites')
+		if (!target) return
+
+		const productItem = event.target.closest('.product-item')
+		const productIndex = [...mostPopularProducts.children].indexOf(productItem)
+		const product = MOST_POPULAR_PRODUCTS[productIndex]
+
+		if (target.classList.contains('add-to-cart')) {
+			addToCart(product)
+			alert('Product added to cart!')
+		} else if (target.classList.contains('add-to-favorites')) {
+			addToFavorites(product)
+			alert('Product added to favorites!')
+		}
+	})
+
+	mostPopularSwiper.update()
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -298,6 +410,20 @@ document.addEventListener('DOMContentLoaded', () => {
 function renderJustArrivedProducts() {
 	justArrivedProducts.innerHTML = ''
 
+	// swiper slide
+	const justArrivedSwiper = new Swiper('.just-arrived-carousel', {
+		slidesPerView: 4,
+		spaceBetween: 20,
+		navigation: {
+			nextEl: '.just-arrived-next',
+			prevEl: '.just-arrived-prev',
+		},
+		pagination: {
+			el: '.swiper-pagination',
+			clickable: true,
+		},
+	})
+
 	JUST_ARRIVED_PRODUCTS.forEach(product => {
 		const productElement = document.createElement('div')
 		productElement.classList.add('product-item', 'swiper-slide')
@@ -305,7 +431,7 @@ function renderJustArrivedProducts() {
 		productElement.innerHTML = `
             <div>
                   <span class="badge bg-success position-absolute m-3">${product.discount}</span>
-                  <a href="#" class="btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
+                  <a class="add-to-favorites btn-wishlist"><svg width="24" height="24"><use xlink:href="#heart"></use></svg></a>
                   <figure>
                     <a href="product.html?id=${product.id}" title="${product.name}">
                       <img src="${product.image}" alt="${product.name}"  class="tab-image">
@@ -328,15 +454,32 @@ function renderJustArrivedProducts() {
                             </button>
                         </span>
                     </div>
-                    <a href="#" class="nav-link">Add to Cart <iconify-icon icon="uil:shopping-cart"></a>
+                    <a class="add-to-cart nav-link" >Add to Cart <iconify-icon icon="uil:shopping-cart"></a>
                   </div>
                 </div>
         `
-
 		justArrivedProducts.appendChild(productElement)
 	})
+
+	justArrivedProducts.addEventListener('click', function (event) {
+		const target = event.target.closest('.add-to-cart, .add-to-favorites')
+		if (!target) return
+
+		const productItem = event.target.closest('.product-item')
+		const productIndex = [...justArrivedProducts.children].indexOf(productItem)
+		const product = JUST_ARRIVED_PRODUCTS[productIndex]
+
+		if (target.classList.contains('add-to-cart')) {
+			addToCart(product)
+			alert('Product added to cart!')
+		} else if (target.classList.contains('add-to-favorites')) {
+			addToFavorites(product)
+			alert('Product added to favorites!')
+		}
+	})
+
 	attachQuantityHandlers()
-	swiper.update()
+	justArrivedSwiper.update()
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -370,7 +513,7 @@ $(document).ready(function () {
             <!-- Значок скидки и кнопка избранного -->
             <div class="product-page-badge">
               <span class="badge bg-success">${product.discount}</span>
-              <a href="#" class="btn-wishlist">
+              <a id="add-to-favorites-btn" class="btn-wishlist">
                 <svg width="24" height="24"><use xlink:href="#heart"></use></svg>
               </a>
             </div>
@@ -390,12 +533,22 @@ $(document).ready(function () {
             <p class="product-page-text">
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum. Cras vehicula, eros eu sagittis faucibus, elit ex molestie urna, sed malesuada enim purus in magna. Nulla facilisi. Suspendisse potenti. Etiam ut diam vitae risus ultrices euismod. Fusce sit amet est in mauris faucibus sollicitudin. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus lacinia odio vitae vestibulum vestibulum. Cras vehicula, eros eu sagittis faucibus, elit ex molestie urna, sed malesuada enim purus in magna. Nulla facilisi. Suspendisse potenti. Etiam ut diam vitae risus ultrices euismod. Fusce sit amet est in mauris faucibus sollicitudin.
             </p>
-            <button class="btn btn-primary btn-lg w-100">Add to Cart 🛒</button>
+            <button id="add-to-cart-btn" class="btn btn-primary btn-lg w-100">Add to Cart 🛒</button>
             <a class="btn btn-lg btn-outline-light w-100 product-page-link" href="index.html">Back to Products</a>
           </div>
         </div>
       </div>
     `)
+
+		$('#add-to-cart-btn').on('click', function () {
+			addToCart(product)
+			alert('Product added to cart!')
+		})
+
+		$('#add-to-favorites-btn').on('click', function () {
+			addToFavorites(product)
+			alert('Product added to favorites!')
+		})
 	} else {
 		$productDetails.html(`
     <div class="alert alert-danger mt-5 text-center">
@@ -406,3 +559,33 @@ $(document).ready(function () {
   `)
 	}
 })
+
+// add to Cart
+function addToCart(product) {
+	let cart = JSON.parse(localStorage.getItem('cart')) || []
+
+	const existingProduct = cart.find(p => p.id === product.id)
+
+	if (existingProduct) {
+		existingProduct.quantity += 1
+	} else {
+		cart.push({ ...product, quantity: 1 })
+	}
+	localStorage.setItem('cart', JSON.stringify(cart))
+
+	window.loadCart()
+}
+
+// add to Favorites
+function addToFavorites(product) {
+	let favorites = JSON.parse(localStorage.getItem('favorites')) || []
+
+	const existingProduct = favorites.find(p => p.id === product.id)
+
+	if (existingProduct) {
+		existingProduct.quantity += 1
+	} else {
+		favorites.push({ ...product, quantity: 1 })
+	}
+	localStorage.setItem('favorites', JSON.stringify(favorites))
+}
